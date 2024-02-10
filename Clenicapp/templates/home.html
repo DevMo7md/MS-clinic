@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<h3>Hi {{name}}, Welcome to muscle clinic</h3>
+<br><hr>
+<div class="row row-cols-1 row-cols-md-3 g-4" dir="rtl">
+  {%for item in cards_list%}
+    <div class="col">
+
+      <div class="card h-100">
+        <img src="..." class="card-img-top" alt="photo">
+
+        <div class="card-body">
+
+          <h5 class="card-title">{{item.i.healName}}</h5>
+          <p class="card-text">{{item.i.healinfo}}</p>
+          <center><a href="details/" class="btn btn-primary">تفاصيل</a></center>
+        </div>
+        <div class="card-footer">
+          <small class="text-body-secondary"></small>
+        </div>
+      </div>
+    </div>
+    {%endfor%}
+</div>
+{%endblock%}

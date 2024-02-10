@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" dir="rtl">
+  <h1 class="mt-5 text-center">Welcome to Muscle Clinic</h1>
+  {% for item in cards_list %}
+  {% if forloop.counter0|divisibleby:2 %} {# Check if current iteration is even #}
+  <div class="row mt-5">
+  {% endif %}
+    <div class="col-md-6">
+      <h2>• {{ item.i.healName }}</h2>
+      <p>{{ item.i.details }}</p>
+    </div>
+  {% if forloop.counter|divisibleby:2 or forloop.last %} {# Close row if current iteration is odd or last #}
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}
