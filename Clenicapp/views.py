@@ -40,3 +40,5 @@ def details(request):
                "name": name,
                }
     return render(request, 'details.html', context)
+
+

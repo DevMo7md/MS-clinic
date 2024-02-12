@@ -7,4 +7,5 @@ urlpatterns = [
     path('connect_us/', views.connect, name='connect'),
     path('details/', views.details, name='details'),
 
+
 ]
