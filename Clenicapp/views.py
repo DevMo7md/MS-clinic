@@ -46,9 +46,9 @@ def knee_pain(request):
     return render(request, 'knee_pain.html')
 
 
-def fakry (request):
+def fakry(request):
     return render(request, 'fakry.html')
 
 
-def PG_injuries (request):
+def PG_injuries(request):
     return render(request, 'PG_injuries.html')
