@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+  .backbtn{
+      position: relative;
+      bottom: 20px ;
+
+  }
+</style>
+
+
+
 <div class="container" dir="rtl">
   <h1 class="mt-5 text-center">Welcome to Muscle Clinic</h1>
   {% for item in details_list %}
@@ -15,5 +25,7 @@
   </div>
   {% endif %}
   {% endfor %}
+      <center><a href="http://127.0.0.1:8000/" class="btn btn-primary backbtn">رجوع</a></center>
+
 </div>
 {% endblock %}
