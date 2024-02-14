@@ -31,12 +31,12 @@ def connect(request):
 
 
 def details(request):
-    cardInfo = Clinec_site.objects.all()
-    cards_list = []
-    for i in cardInfo:
-        cards_list.append({"i": i})
+    detailInfo = Clinec_site.objects.all()
+    details_list = []
+    for i in detailInfo:
+        details_list.append({"i": i})
     name = Clinec_site.healName
-    context = {"cards_list": cards_list,
+    context = {"details_list": details_list,
                "name": name,
                }
     return render(request, 'details.html', context)

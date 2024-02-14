@@ -5,6 +5,7 @@ from django.db import models
 
 class Clinec_site(models.Model):
     healName = models.CharField(max_length=50, help_text='اسم الاصابه')
+    injuryImg = models.ImageField(upload_to='Clenic site/Clenic/', verbose_name='Injury photo', null=True, blank=True)
     healinfo = models.CharField(max_length=100000, help_text='معلومات عنها و طريقه الوقايه منها و طرق علاجها')
     details = models.CharField(max_length=1000000, default='', help_text='تفاصيل عن طرق علاجها بالمركز')
 

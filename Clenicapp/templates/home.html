@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {%block content%}
+<style>
+  .cardPhoto{
+    height: 200px ;
+  }
+</style>
 
 <h3>Hi {{name}}, Welcome to muscle clinic</h3>
 <br><hr>
@@ -9,7 +14,9 @@
     <div class="col">
 
       <div class="card h-100">
-        <img src="knee_pain.png" class="card-img-top" alt="photo">
+        {% if item.i.injuryImg %}
+          <img src="{{item.i.injuryImg.url}}" class="card-img-top cardPhoto" alt="photo">
+        {% endif %}
 
         <div class="card-body">
 
