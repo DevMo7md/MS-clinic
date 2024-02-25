@@ -5,3 +5,4 @@ from .models import Clinec_site, Clinic_about_us
 
 admin.site.register(Clinec_site)
 admin.site.register(Clinic_about_us)
+
