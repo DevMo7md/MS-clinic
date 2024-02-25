@@ -16,3 +16,10 @@ class Clinic_about_us(models.Model):
 
 
 
+class Users(models.Model):
+    user_name = models.CharField(max_length=50, null=False)
+    email = models.EmailField(null=False)
+    password = models.CharField(max_length=50, null=False)
+
+    def __str__(self) -> str:
+        return self.user_name

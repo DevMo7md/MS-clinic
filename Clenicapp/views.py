@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Clinec_site, Clinic_about_us
+from .models import Clinec_site, Clinic_about_us, Users
 
 
 # Create your views here.
@@ -52,3 +52,14 @@ def fakry(request):
 
 def PG_injuries(request):
     return render(request, 'PG_injuries.html')
+
+
+def login(request):
+    user_name = request.POST.get('user_name')
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    
+    
+    
+
+    return render(request, 'login_page.html')
