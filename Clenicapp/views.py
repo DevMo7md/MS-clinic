@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 from django.shortcuts import render
 from .models import Clinec_site, Clinic_about_us, Users
 
-=======
 from django.shortcuts import render, get_list_or_404
 from .models import Clinec_site, Clinic_about_us, Add_user
 from .forms import AddUsers
->>>>>>> 72047f5
 
 # Create your views here.
 
@@ -59,7 +56,7 @@ def fakry(request):
 def PG_injuries(request):
     return render(request, 'PG_injuries.html')
 
-<<<<<<< HEAD
+
 
 def login(request):
     user_name = request.POST.get('user_name')
@@ -67,10 +64,11 @@ def login(request):
     password = request.POST.get('password')
     
     
-    
+
+
 
     return render(request, 'login_page.html')
-=======
+
 def login(request):
     if request is not None:
         dataa = get_list_or_404(Add_user)
@@ -86,4 +84,3 @@ def login(request):
 
 
     return render(request, 'login.html')
->>>>>>> 72047f5
