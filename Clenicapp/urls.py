@@ -11,6 +11,7 @@ urlpatterns = [
     path('knee_pain/', views.knee_pain, name='knee_pain'),
     path('alfakry/', views.fakry, name='fakry'),
     path('Playground_injuries/', views.PG_injuries, name='PG_injuries'),
+    path('login', views.login, name='login'),
     
 
 ]

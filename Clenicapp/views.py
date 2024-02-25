@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from .models import Clinec_site, Clinic_about_us
-
+from django.shortcuts import render, get_list_or_404
+from .models import Clinec_site, Clinic_about_us, Add_user
+from .forms import AddUsers
 
 # Create your views here.
 
@@ -52,3 +52,19 @@ def fakry(request):
 
 def PG_injuries(request):
     return render(request, 'PG_injuries.html')
+
+def login(request):
+    if request is not None:
+        dataa = get_list_or_404(Add_user)
+    else:
+        dataa = None
+
+    if request.method == 'POST':
+        data = AddUsers(request.POST,dataa)
+        if data.is_valid():
+            data.save()
+    else:
+        data = AddUsers(dataa)        
+
+
+    return render(request, 'login.html')
