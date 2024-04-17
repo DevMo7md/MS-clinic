@@ -1,13 +1,13 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Create your models here
 
 class Clinec_site(models.Model):
     healName = models.CharField(max_length=50, help_text='اسم الاصابه')
     injuryImg = models.ImageField(upload_to='Clenic site/Clenic/', verbose_name='Injury photo', null=True, blank=True)
-    healinfo = models.CharField(max_length=100000, help_text='معلومات عنها و طريقه الوقايه منها و طرق علاجها')
-    details = models.CharField(max_length=1000000, default='', help_text='تفاصيل عن طرق علاجها بالمركز')
+    healinfo = models.TextField(help_text='معلومات عنها و طريقه الوقايه منها و طرق علاجها')
+    details = models.TextField(default='', help_text='تفاصيل عن طرق علاجها بالمركز')
 
     def __str__(self) -> str:
         return self.healName
@@ -15,43 +15,17 @@ class Clinec_site(models.Model):
 
 class Clinic_about_us(models.Model):
     head = models.CharField(max_length=500, help_text='رأس الموضوع')
-    body = models.CharField(max_length=500000, help_text='الموضوع')
+    body = models.TextField(max_length=500000, help_text='الموضوع')
 
     def __str__(self) -> str:
         return self.head
 
 
-class Add_user(models.Model):
-    username = models.CharField(max_length=50, null=True)
-    email = models.EmailField(null=True, blank=True)
-    password = models.CharField(max_length=50, null=True)
+class Contact(models.Model):
+    name = models.CharField(max_length=30)
+    email = models.EmailField()
+    phoneNum = models.CharField(max_length=12)
+    message = models.TextField()
 
-    def __str__(self) -> str:
-        return self.username
-
-
-from django.db import models
-
-
-# Create your models here
-
-class Clinec_site(models.Model):
-    healName = models.CharField(max_length=50, help_text='اسم الاصابه')
-    injuryImg = models.ImageField(upload_to='Clenic site/Clenic/', verbose_name='Injury photo', null=True, blank=True)
-    healinfo = models.CharField(max_length=100000, help_text='معلومات عنها و طريقه الوقايه منها و طرق علاجها')
-    details = models.CharField(max_length=1000000, default='', help_text='تفاصيل عن طرق علاجها بالمركز')
-
-
-class Clinic_about_us(models.Model):
-    head = models.CharField(max_length=500, help_text='رأس الموضوع')
-    body = models.CharField(max_length=500000, help_text='الموضوع')
-
-
-
-class Users(models.Model):
-    user_name = models.CharField(max_length=50, null=False)
-    email = models.EmailField(null=False)
-    password = models.CharField(max_length=50, null=False)
-
-    def __str__(self) -> str:
-        return self.user_name
+    def __str__(self):
+        return f"{self.name} Send {self.message}"
