@@ -1,5 +1,56 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4 bg-light"><br><br>
+      <h3 class="bg-secondary text-center text-white">Contact us</h3>
+      <form method="post" action="">
+        {% csrf_token %}
+        <div class="form-group">
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Inter your name"
+            required
+            class="form-control"
+          />
+        </div>
+        <div class="form-group mt-2">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Inter your email"
+            required
+            class="form-control"
+          />
+        </div>
+        <div class="form-group mt-2">
+          <input
+            type="tel"
+            name="telephone"
+            placeholder="Inter your phone number"
+            required
+            class="form-control"
+          />
+        </div>
+        <div class="form-group mt-2">
+          <label>How can we helping you...</label>
+          <textarea
+            name="comment"
+            rows="5"
+            cols="10"
+            class="form-control"
+            required
+          ></textarea>
+        </div>
+        <div class="d-grid gap-2 mt-4">
+          <button class="btn btn-secondary">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-{% block content %}
-<h1></h1>
 {% endblock %}
