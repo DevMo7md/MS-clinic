@@ -26,35 +26,44 @@
     .btn {
         display: inline-block;
         padding: 10px 20px;
-        background-color: #007bff;
+        background-color: #7f8388;
         color: #fff;
         text-decoration: none;
         border-radius: 5px;
     }
+    .btn:hover {
+        background-color: #c3c3d3;
+    }
 </style>
-<form method="POST">
-    {%csrf_token%}
-    <br>
     <div class="container">
-        <div class="form-group">
-            <label>User name :</label>
-            <input type="text" name="username" required>
-        </div>
-        <br>
-        <div class="form-group">
-            <label>Email :</label>
-            <input type="email" name="email"required>
-        </div>
-        <br>
-        <div class="form-group">
-            <label>Password :</label>
-            <input type="password" name="password" required>
-        </div>
-        <br>
-        
-            <button type="submit" name="submit" class="btn">LOG IN</button>
-            <input type="hidden" name="hidde">
-        
+        <h1>Welcome to MS Clinic</h1>
+        <h4>Login Here!</h4><hr><br><br>
+    <form method="POST" autocomplete="off">
+        {% csrf_token %}
+        <form>
+            <div class="mb-3">
+              <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="false">
+            </div><br>
+            <div class="mb-3">
+              <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="false" id="pw">
+            </div><br><br>
+
+        <button type="submit" class="btn btn-secondary">Login</button>
+    </form><br><br>
+    <p>
+        Don't have an account?,
+        <a href="{% url 'register' %}">register here</a>
+    </p>
+    
+    {% if messages %}
+    <div >
+        <ul>
+            {% for message in messages %}
+                <li style="color: red;">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+     {% endif %}   
     </div>
 </form>
 {% endblock %}

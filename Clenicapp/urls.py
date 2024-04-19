@@ -11,9 +11,9 @@ urlpatterns = [
     path('knee_pain/', views.knee_pain, name='knee_pain'),
     path('alfakry/', views.fakry, name='fakry'),
     path('Playground_injuries/', views.PG_injuries, name='PG_injuries'),
-    path('login/', views.login, name='login'),
+    path('register', views.register, name='register'),
     path('login', views.login, name='login'),
-    
+    path('logout', views.logout, name='logout'),
 
 ]
 

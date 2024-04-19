@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Register!</h1><br>
+<div class="" >
+    <form method="POST" autocomplete="off">
+        {% csrf_token %}
+         
+        {{registerform.as_p}}
+
+        <button type="submit" value="Register" class="btn btn-secondary" >Register</button>
+    </form>
+    <p>
+        Already have an account?,
+        <a href="{% url 'login' %}">login here</a>
+    </p>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li style="color: red;">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>    
+{% endblock %}
