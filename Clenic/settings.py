@@ -79,7 +79,11 @@ WSGI_APPLICATION = 'Clenic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME':'Clinic',
+        'USER': 'postgres',
+        'PASSWORD': '123456',
+        'HOST': 'localhost', # or your database host
+        'PORT': '5432', # or your database port
     }
 }
 
