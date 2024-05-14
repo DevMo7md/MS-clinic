@@ -15,7 +15,7 @@ def register(request):
             form.save() # Save the new user to the database
             return redirect("login") # Redirect the user to the login page after successful registration
         else:
-            messages.error(request, "Registration form is not valid. Please try again and verify your infornations ")
+            messages.error(request, "Registration form is not valid. Please try again and verify your informations ")
 
     context = {
         'registerform': form, # Pass the registration form to the template context
