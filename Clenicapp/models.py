@@ -11,10 +11,17 @@ class Clinec_site(models.Model):
     def __str__(self) -> str:
         return self.healName
 
+class Injury_Photos(models.Model):
+    injury = models.ForeignKey(Clinec_site, on_delete=models.CASCADE, related_name='injury_photos')
+    photo = models.ImageField(upload_to='Injury_Photos/', verbose_name='Injury photo')
+    def __str__(self):
+        return f'photo of {self.injury.healName}'
+
+
 
 class Clinic_about_us(models.Model):
     head = models.CharField(max_length=500, help_text='رأس الموضوع')
-    body = models.TextField(max_length=500000, help_text='الموضوع')
+    body = models.TextField(help_text='الموضوع')
 
     def __str__(self) -> str:
         return self.head

@@ -1,34 +1,91 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title text-center">مرحباً في MS-Clinic</h1>
+  </div>
+</div>
 
-{%block content%}
-<style>
-  .cardPhoto{
-    height: 200px ;
-  }
-</style>
-
-<h3>Hi {{name}}, Welcome to MS Clinic</h3>
-<br><hr>
-<div class="row row-cols-1 row-cols-md-3 g-4" dir="rtl">
-  {%for item in cards_list%}
+<div class="container">
+  <div class="row row-cols-1 row-cols-md-3 g-4" dir="rtl">
+    {% for item in cards_list %}
     <div class="col">
-
       <div class="card h-100">
         {% if item.i.injuryImg %}
-          <img src="{{item.i.injuryImg.url}}" class="card-img-top cardPhoto" alt="photo">
-        {% endif %}
-
-        <div class="card-body">
-
-          <h5 class="card-title">{{item.i.healName}}</h5>
-          <p class="card-text">{{item.i.healinfo}}</p>
-          <center><a href="details/" class="btn btn-primary">تفاصيل</a></center>
+        <div class="card-img-wrapper">
+          <img
+            src="{{item.i.injuryImg.url}}"
+            class="card-img-top"
+            alt="{{item.i.healName}}"
+          />
         </div>
-        <div class="card-footer">
-          <small class="text-body-secondary"></small>
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title section-title">{{item.i.healName}}</h5>
+          <p class="card-text">{{item.i.healinfo|truncatewords:30}}</p>
+          <div class="text-center">
+            <a href="{% url 'details' item.i.id %}" class="btn btn-primary">
+              <i class="fas fa-info-circle me-2"></i>
+              المزيد من التفاصيل
+            </a>
+          </div>
         </div>
       </div>
     </div>
-    {%endfor%}
+    {% endfor %}
+  </div>
 </div>
-{%endblock%}
+
+<style>
+  .card-img-wrapper {
+    height: 200px;
+    overflow: hidden;
+  }
+  .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+  .card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  .card-body {
+    padding: 1.5rem;
+  }
+  .card-title {
+    margin-bottom: 1rem;
+    color: var(--black-color);
+    font-weight: 600;
+  }
+  .card-text {
+    color: var(--light-text);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .btn-primary {
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+</style>
+{% endblock %}

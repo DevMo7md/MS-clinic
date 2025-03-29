@@ -1,43 +1,115 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %} {% load static %}
 
-
-
-{% block content %}
-{%load static%}
-<style>
-img{
-  max-width: 100%;
-    height: auto;
-    margin: 0 auto; /* Center the image horizontally */
-}
-
-</style>
-<body>
-
-<h1 class="mt-5 text-center">• إصابات الملاعب •</h1><br>
-<center><img src="{%static 'BIWDR.png'%}" alt="knee Photo"></center>
-<div class="container" dir="rtl">
-
-
-  <div class="row mt-5">
-    <h2>• إصابات الملاعب</h2>
-    <div class="fs-5">
-
-إصابات الملاعب تشكل تحديًا كبيرًا للرياضيين، سواء كانوا هواة أو محترفين. يمكن أن تؤثر هذه الإصابات على أدائهم وتقيدهم عن ممارسة النشاط البدني. دعونا نلقي نظرة على أنواع إصابات الملاعب الأكثر شيوعًا وكيفية الوقاية منها وعلاجها:
-
-
-<ul>
-      <li>
-إصابة وتر العرقوب: تحدث نتيجة التهاب أو تواء وتضرر الوتر الذي يربط عضلة الربلة بالكعب في الجزء الخلفي السفلي من القدم. تكون شائعة في الأنشطة الرياضية مثل الجري والقفز.</li>
-      <li> كسور العظام: تحدث عندما يتعرض العظم لقوة زائدة تتجاوز مقدار القوة التي يمكن تحملها. تترافق مع أعراض فورية مثل الشعور بالألم الحاد والتورم.</li>
-      <li>كسور الإجهاد: تحدث نتيجة تكرار الحركات الرياضية لفترة طويلة، وقد تسبب تشققات صغيرة في العظام تتطور مع الوقت لتحدث كسرًا في العظم.</li>
-      <li>التهاب الوتر الرضفي: يحدث في منطقة الرضفة في الركبة نتيجة للأنشطة المكررة مثل كرة السلة والكرة الطائرة.</li>
-      <li>الالتواء: يحدث نتيجة الاستخدام المفرط للجزء الهيكلي من الجسم أو استخدام قوة أكبر من الطاقة التي يتحملها الجسم أثناء التمارين.</li>
-      <li>تجنب الإصابات باتباع تقنيات الوقاية المناسبة والاحترازات أثناء ممارسة الرياضة. إذا كنت بحاجة إلى استشارة طبية، يُفضل التحدث مع طبيب مختص.</li>
-    </ul>
-    </div>
-
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title text-center">إصابات الملاعب</h1>
   </div>
 </div>
+<br />
+<div class="container" dir="rtl">
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+      <div class="content-section text-center">
+        <img
+          src="{% static 'BIWDR.png' %}"
+          alt="صورة إصابات الملاعب"
+          class="img-fluid rounded shadow"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-10 mx-auto">
+      <div class="content-section">
+        <h2 class="section-title mb-4">إصابات الملاعب</h2>
+        <div class="injury-content">
+          <p class="lead mb-4">
+            إصابات الملاعب تشكل تحديًا كبيرًا للرياضيين، سواء كانوا هواة أو
+            محترفين. يمكن أن تؤثر هذه الإصابات على أدائهم وتقيدهم عن ممارسة
+            النشاط البدني. دعونا نلقي نظرة على أنواع إصابات الملاعب الأكثر
+            شيوعًا وكيفية الوقاية منها وعلاجها:
+          </p>
+
+          <div class="mb-4">
+            <h3 class="section-subtitle">أنواع إصابات الملاعب الشائعة:</h3>
+            <ul class="injury-list">
+              <li>
+                <strong>إصابة وتر العرقوب:</strong> تحدث نتيجة التهاب أو تواء
+                وتضرر الوتر الذي يربط عضلة الربلة بالكعب في الجزء الخلفي السفلي
+                من القدم. تكون شائعة في الأنشطة الرياضية مثل الجري والقفز.
+              </li>
+              <li>
+                <strong>كسور العظام:</strong> تحدث عندما يتعرض العظم لقوة زائدة
+                تتجاوز مقدار القوة التي يمكن تحملها. تترافق مع أعراض فورية مثل
+                الشعور بالألم الحاد والتورم.
+              </li>
+              <li>
+                <strong>كسور الإجهاد:</strong> تحدث نتيجة تكرار الحركات الرياضية
+                لفترة طويلة، وقد تسبب تشققات صغيرة في العظام تتطور مع الوقت
+                لتحدث كسرًا في العظم.
+              </li>
+              <li>
+                <strong>التهاب الوتر الرضفي:</strong> يحدث في منطقة الرضفة في
+                الركبة نتيجة للأنشطة المكررة مثل كرة السلة والكرة الطائرة.
+              </li>
+              <li>
+                <strong>الالتواء:</strong> يحدث نتيجة الاستخدام المفرط للجزء
+                الهيكلي من الجسم أو استخدام قوة أكبر من الطاقة التي يتحملها
+                الجسم أثناء التمارين.
+              </li>
+            </ul>
+          </div>
+
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            تجنب الإصابات باتباع تقنيات الوقاية المناسبة والاحترازات أثناء
+            ممارسة الرياضة. إذا كنت بحاجة إلى استشارة طبية، يُفضل التحدث مع طبيب
+            مختص.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .injury-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--light-text);
+  }
+  .section-subtitle {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .injury-list {
+    list-style-type: none;
+    padding-right: 0;
+  }
+  .injury-list li {
+    position: relative;
+    padding-right: 1.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .injury-list li::before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    right: 0;
+    font-weight: bold;
+  }
+  .injury-list strong {
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .img-fluid {
+    max-height: 400px;
+    object-fit: contain;
+  }
+</style>
 {% endblock %}
-</body>

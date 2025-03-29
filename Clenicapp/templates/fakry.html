@@ -1,59 +1,120 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %} {% load static %}
 
-
-
-{% block content %}
-{%load static%}
-<style>
-
-
-</style>
-<body>
-
-<h1 class="mt-5 text-center">• إصابات العمود الفقري •</h1><br>
-<center><img src="{%static 'backWDR.png'%}" alt="knee Photo"></center>
-<div class="container" dir="rtl">
-
-
-  <div class="row mt-5">
-    <h2>• إصابات العمود الفقري</h2>
-    <div class="fs-5">
-
-      <p>ألم الركبة يعتبر شكوى شائعة ويصيب الأشخاص من جميع الأعمار. قد يكون ألم الركبة نتيجة إصابة، مثل تمزق الأربطة أو تمزق الغضاريف. وقد ينجم أيضًا عن بعض الحالات الطبية، بما في ذلك التهاب المفاصل والنقرس والالتهابات. تستجيب أنواع كثيرة من آلام الركبة البسيطة لإجراءات الرعاية الذاتية بشكل جيد. ويمكن أن يساعد العلاج الطبيعي ودعامات الركبة أيضًا في التخفيف من الألم.
-
-قد تختلف موقع وحدة ألم الركبة بناءً على سبب المشكلة. العلامات والأعراض التي تصاحب أحيانًا ألم الركبة تشمل:
-
-<ul>
-      <li>التورم والتصلب</li>
-      <li> الاحمرار والدفء عند اللمس</li>
-      <li>الضعف أو عدم الاتزان</li>
-      <li>أصوات فرقعة أو طرقعة      </li>
-      <li>عدم القدرة على فرد الركبة تمامًا</li>
-    </ul>
-يجب الاتصال بالطبيب في الحالات التالية:
-<ul>
-      <li>عدم القدرة على تحمل الوزن على ركبتك أو الشعور كما لو كانت الركبة غير ثابتة أو متصلبة</li>
-      <li> وجود تورم ملحوظ في الركبة</li>
-      <li>عدم القدرة على مد الركبة أو ثنيها بشكل كامل</li>
-      <li>ملاحظة تشوه واضح في الساق أو الركبة      </li>
-      <li>عدم القدرة على فرد الركبة تمامًا</li>
-      <li>الإصابة بالحمى، فضلاً عن ملاحظة احمرار في الركبة أو الشعور بألم أو تورم فيها
-وجود ألم شديد في الركبة مرتبط بإصابة</li>
-    </ul>
-
-إصابات الركبة تشمل العديد من الحالات، مثل:
-<ul>
-      <li>إصابة الرباط التصالُبي الأمامي (ACL)</li>
-      <li> تمزق الغضروف الهلالي</li>
-      <li>الكسور</li>
-      <li>التهاب جراب الركبة </li>
-      <li>التهاب الوتر الرضفي</li>
-      <li>المشكلات الميكانيكية.</li>
-    </ul>
-في حالة الألم الشديد أو الاستمرار، يُفضل استشارة الطبيب لتحديد التشخيص الدقيق والعلاج المناسب.</p>
-    </div>
-
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title text-center">إصابات العمود الفقري</h1>
   </div>
 </div>
+<br />
+<div class="container" dir="rtl">
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+      <div class="content-section text-center">
+        <img
+          src="{% static 'backWDR.png' %}"
+          alt="صورة العمود الفقري"
+          class="img-fluid rounded shadow"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-10 mx-auto">
+      <div class="content-section">
+        <h2 class="section-title mb-4">إصابات العمود الفقري</h2>
+        <div class="injury-content">
+          <p class="lead mb-4">
+            ألم الركبة يعتبر شكوى شائعة ويصيب الأشخاص من جميع الأعمار. قد يكون
+            ألم الركبة نتيجة إصابة، مثل تمزق الأربطة أو تمزق الغضاريف. وقد ينجم
+            أيضًا عن بعض الحالات الطبية، بما في ذلك التهاب المفاصل والنقرس
+            والالتهابات.
+          </p>
+
+          <div class="mb-4">
+            <h3 class="section-subtitle">العلامات والأعراض:</h3>
+            <ul class="injury-list">
+              <li>التورم والتصلب</li>
+              <li>الاحمرار والدفء عند اللمس</li>
+              <li>الضعف أو عدم الاتزان</li>
+              <li>أصوات فرقعة أو طرقعة</li>
+              <li>عدم القدرة على فرد الركبة تمامًا</li>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="section-subtitle">متى يجب الاتصال بالطبيب:</h3>
+            <ul class="injury-list">
+              <li>
+                عدم القدرة على تحمل الوزن على ركبتك أو الشعور كما لو كانت الركبة
+                غير ثابتة أو متصلبة
+              </li>
+              <li>وجود تورم ملحوظ في الركبة</li>
+              <li>عدم القدرة على مد الركبة أو ثنيها بشكل كامل</li>
+              <li>ملاحظة تشوه واضح في الساق أو الركبة</li>
+              <li>عدم القدرة على فرد الركبة تمامًا</li>
+              <li>
+                الإصابة بالحمى، فضلاً عن ملاحظة احمرار في الركبة أو الشعور بألم
+                أو تورم فيها
+              </li>
+              <li>وجود ألم شديد في الركبة مرتبط بإصابة</li>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="section-subtitle">أنواع إصابات الركبة:</h3>
+            <ul class="injury-list">
+              <li>إصابة الرباط التصالُبي الأمامي (ACL)</li>
+              <li>تمزق الغضروف الهلالي</li>
+              <li>الكسور</li>
+              <li>التهاب جراب الركبة</li>
+              <li>التهاب الوتر الرضفي</li>
+              <li>المشكلات الميكانيكية</li>
+            </ul>
+          </div>
+
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            في حالة الألم الشديد أو الاستمرار، يُفضل استشارة الطبيب لتحديد
+            التشخيص الدقيق والعلاج المناسب.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .injury-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--light-text);
+  }
+  .section-subtitle {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .injury-list {
+    list-style-type: none;
+    padding-right: 0;
+  }
+  .injury-list li {
+    position: relative;
+    padding-right: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .injury-list li::before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    right: 0;
+    font-weight: bold;
+  }
+  .img-fluid {
+    max-height: 400px;
+    object-fit: contain;
+  }
+</style>
 {% endblock %}
-</body>

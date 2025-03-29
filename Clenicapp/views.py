@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_list_or_404, redirect
-from .models import Clinec_site, Clinic_about_us, Contact
+from .models import *
 from . forms import CreateUserForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import auth
@@ -38,9 +38,9 @@ def login(request):
             if user is not None:
                 auth.login(request, user) # Log the user in
                 messages.success(request, "User logged in successfully!")
-                return redirect("connect") # Redirect the user to the home page after successful login
+                return redirect("main_page") # Redirect the user to the home page after successful login
             else:
-                messages.error(request, "Invalid username or password")
+                messages.error(request, "please fill the form correctly")
         else:
             messages.error(request, "Invalid username or password")
     else:
@@ -72,9 +72,7 @@ def about_us(request):
     aboutList = []
     for a in about:
         aboutList.append({'a': a})
-    name = request.GET.get('name') or ''
-    context = {'aboutList': aboutList,
-               'name': name}
+    context = {'aboutList': aboutList,}
     return render(request, 'about_us.html', context)
 
 def logout(request):
@@ -96,15 +94,12 @@ def connect(request):
     return render(request, 'connect_us.html')
 
 
-def details(request):
-    detailInfo = Clinec_site.objects.all()
-    details_list = []
-    for i in detailInfo:
-        details_list.append({"i": i})
-    name = Clinec_site.healName
-    context = {"details_list": details_list,
-               "name": name,
-               }
+def details(request, pk):
+    try:
+        injury = Clinec_site.objects.get(pk=pk)
+    except Clinec_site.DoesNotExist:
+        return redirect('main_page')
+    context = {'injury': injury}
     return render(request, 'details.html', context)
 
 
@@ -118,3 +113,32 @@ def fakry(request):
 
 def PG_injuries(request):
     return render(request, 'PG_injuries.html')
+
+# dashboard
+def dashboard(request):
+    if not (request.user.is_authenticated and request.user.is_staff):
+        messages.error(request, "This page not allowed for you please login with your admin account")
+        return redirect('login')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        details = request.POST.get('details')
+        photos = request.FILES.getlist('images')
+        # التحقق من صحة البيانات المدخلة
+        if not name:
+            messages.error(request, "حقل الاسم مطلوب.")
+            return redirect('dashboard')
+        if not details:
+            messages.error(request, "حقل التفاصيل مطلوب.")
+            return redirect('dashboard')
+        if not photos:
+            messages.error(request, "يجب رفع صورة واحدة على الأقل.")
+            return redirect('dashboard')
+        
+        injury = Clinec_site.objects.create(healName=name, details=details, injuryImg=photos[0])
+        for photo in photos[1:]:
+            Injury_Photos.objects.create(injury=injury, photo=photo)
+        messages.success(request, "Injury added successfully")
+        return redirect('dashboard')
+    return render(request, 'dashboard.html')
+
+        

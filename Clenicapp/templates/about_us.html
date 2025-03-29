@@ -1,19 +1,36 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container" dir="rtl">
-  <h1 class="mt-5 text-center">Welcome to Muscle Clinic</h1>
-  {% for item in aboutList %}
-  {% if forloop.counter0|divisibleby:2 %} {# Check if current iteration is even #}
-  <div class="row mt-5">
-  {% endif %}
-    <div class="col-md-6">
-      <h2>{{ item.a.head }}</h2>
-      <p>{{ item.a.body }}</p>
-    </div>
-  {% if forloop.counter|divisibleby:2 or forloop.last %} {# Close row if current iteration is odd or last #}
+{% extends 'base.html' %} {% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title text-center">مرحباً بكم في MS-Clinic</h1>
   </div>
-  {% endif %}
-  {% endfor %}
 </div>
+<br />
+<div class="container" dir="rtl">
+  {% for item in aboutList %} {% if forloop.counter0|divisibleby:2 %}
+  <div class="row mb-5">
+    {% endif %}
+    <div class="col-md-6">
+      <div class="content-section h-100">
+        <h2 class="section-title">{{ item.a.head }}</h2>
+        <p class="about-text">{{ item.a.body }}</p>
+      </div>
+    </div>
+    {% if forloop.counter|divisibleby:2 or forloop.last %}
+  </div>
+  {% endif %} {% endfor %}
+</div>
+
+<style>
+  .about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--light-text);
+  }
+  .content-section {
+    transition: transform 0.3s ease;
+  }
+  .content-section:hover {
+    transform: translateY(-5px);
+  }
+</style>
 {% endblock %}

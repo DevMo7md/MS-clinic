@@ -1,56 +1,116 @@
 {% extends 'base.html' %} {% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title text-center">تواصل معنا</h1>
+  </div>
+</div>
+
 <div class="container">
-  <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4 bg-light"><br><br>
-      <h3 class="bg-secondary text-center text-white">Contact us</h3>
-      <form method="post" action="">
-        {% csrf_token %}
-        <div class="form-group">
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Inter your name"
-            required
-            class="form-control"
-          />
-        </div>
-        <div class="form-group mt-2">
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Inter your email"
-            required
-            class="form-control"
-          />
-        </div>
-        <div class="form-group mt-2">
-          <input
-            type="tel"
-            name="telephone"
-            placeholder="Inter your phone number"
-            required
-            class="form-control"
-          />
-        </div>
-        <div class="form-group mt-2">
-          <label>How can we helping you...</label>
-          <textarea
-            name="comment"
-            rows="5"
-            cols="10"
-            class="form-control"
-            required
-          ></textarea>
-        </div>
-        <div class="d-grid gap-2 mt-4">
-          <button class="btn btn-secondary">Send</button>
-        </div>
-      </form>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="content-section">
+        <h2 class="section-title text-center mb-4">راسلنا</h2>
+
+        <form method="post" action="">
+          {% csrf_token %}
+
+          <div class="mb-4">
+            <div class="form-floating">
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="الاسم"
+                required
+                class="form-control"
+              />
+              <label for="name">الاسم</label>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-floating">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="البريد الإلكتروني"
+                required
+                class="form-control"
+              />
+              <label for="email">البريد الإلكتروني</label>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-floating">
+              <input
+                type="tel"
+                id="telephone"
+                name="telephone"
+                placeholder="رقم الهاتف"
+                required
+                class="form-control"
+              />
+              <label for="telephone">رقم الهاتف</label>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-floating">
+              <textarea
+                name="comment"
+                id="comment"
+                class="form-control"
+                style="height: 150px"
+                required
+              ></textarea>
+              <label for="comment">كيف يمكننا مساعدتك؟</label>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">إرسال</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
+<style>
+  .form-floating {
+    margin-bottom: 1rem;
+  }
+  .form-floating > .form-control {
+    height: 3.5rem;
+    padding: 1rem 0.75rem;
+  }
+  .form-floating > textarea.form-control {
+    height: 150px;
+    padding-top: 1.5rem;
+  }
+  .form-floating > label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    padding: 1rem 0.75rem;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+    border: 1px solid transparent;
+    transform-origin: 100% 0;
+    transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+  }
+  .form-floating > .form-control:focus ~ label,
+  .form-floating > .form-control:not(:placeholder-shown) ~ label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+  }
+  .form-floating > textarea.form-control ~ label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+  }
+</style>
 {% endblock %}

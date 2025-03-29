@@ -1,31 +1,191 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <style>
-  .backbtn{
-      position: relative;
-      bottom: 20px ;
+  .backbtn {
+    position: relative;
+    bottom: 20px;
+    margin-top: 2rem;
+    padding: 10px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .backbtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .image-container {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  .image-container:hover {
+    transform: scale(1.02);
+  }
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .image-container:hover img {
+    transform: scale(1.05);
+  }
 
+  /* Lightbox styles */
+  .lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  .lightbox.active {
+    display: flex;
+  }
+  .lightbox-content {
+    max-width: 90%;
+    max-height: 90vh;
+    position: relative;
+  }
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+  .close-lightbox {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  /* Modern page styles */
+  .page-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .content-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+  .injury-title {
+    font-size: 1.8rem;
+    color: #2d3436;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    padding-right: 1rem;
+  }
+  .injury-title::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 70%;
+    background: #007bff;
+    border-radius: 2px;
+  }
+  .injury-details {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #636e72;
   }
 </style>
 
-
+<div class="page-header">
+  <div class="container" dir="rtl">
+    <h1 class="page-title text-center">Welcome to MS-Clinic</h1>
+  </div>
+</div>
 
 <div class="container" dir="rtl">
-  <h1 class="mt-5 text-center">Welcome to Muscle Clinic</h1>
-  {% for item in details_list %}
-  {% if forloop.counter0|divisibleby:2 %} {# Check if current iteration is even #}
-  <div class="row mt-5">
-  {% endif %}
+  <div class="row">
     <div class="col-md-6">
-      <h2>• {{ item.i.healName }}</h2>
-      <p>{{ item.i.details }}</p>
+      <div class="content-section">
+        <h2 class="injury-title">{{ injury.healName }}</h2>
+        <p class="injury-details">{{ injury.details }}</p>
+      </div>
     </div>
-  {% if forloop.counter|divisibleby:2 or forloop.last %} {# Close row if current iteration is odd or last #}
+    <div class="col-md-6">
+      <div class="content-section">
+        <div class="image-grid">
+          {% for image in injury.injury_photos.all %}
+          <div class="image-container" onclick="openLightbox(this)">
+            <img src="{{ image.photo.url }}" alt="injury image" />
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
   </div>
-  {% endif %}
-  {% endfor %}
-      <center><a href="http://127.0.0.1:8000/" class="btn btn-primary backbtn">رجوع</a></center>
-
+  <div class="text-center">
+    <a href="http://127.0.0.1:8000/" class="btn btn-primary backbtn">رجوع</a>
+  </div>
 </div>
+
+<!-- Lightbox -->
+<div class="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-content">
+    <span class="close-lightbox">&times;</span>
+    <img class="lightbox-image" src="" alt="Full size image" />
+  </div>
+</div>
+
+<script>
+  function openLightbox(element) {
+    const lightbox = document.querySelector(".lightbox");
+    const lightboxImage = document.querySelector(".lightbox-image");
+    const img = element.querySelector("img");
+
+    lightboxImage.src = img.src;
+    lightbox.classList.add("active");
+  }
+
+  function closeLightbox() {
+    const lightbox = document.querySelector(".lightbox");
+    lightbox.classList.remove("active");
+  }
+
+  // Close lightbox with escape key
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      closeLightbox();
+    }
+  });
+</script>
 {% endblock %}
