@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Create your views here.
 def register(request):
@@ -87,8 +91,9 @@ def connect(request):
         fphone = request.POST.get('telephone')
         fcomment = request.POST.get('comment')
         query = Contact(name=fnamee, email=femail, phoneNum=fphone, message=fcomment)
-        
         query.save()
+        contact_email_toclinic(femail, fnamee, fphone, fcomment)
+        messages.success(request, "Email sent successfully")
         return redirect("connect")
     
     return render(request, 'connect_us.html')
@@ -119,6 +124,8 @@ def dashboard(request):
     if not (request.user.is_authenticated and request.user.is_staff):
         messages.error(request, "This page not allowed for you please login with your admin account")
         return redirect('login')
+    contacts = Contact.objects.all()
+
     if request.method == 'POST':
         name = request.POST.get('name')
         details = request.POST.get('details')
@@ -139,6 +146,32 @@ def dashboard(request):
             Injury_Photos.objects.create(injury=injury, photo=photo)
         messages.success(request, "Injury added successfully")
         return redirect('dashboard')
-    return render(request, 'dashboard.html')
+    return render(request, 'dashboard.html', {'contacts':contacts})
 
+# contact email to clinic
+def contact_email_toclinic(email_sender, sender_name, sender_phone, email_body):
+    html_content = render_to_string('contact_email_toclinic.html', {'email_sender': email_sender, 'sender_name': sender_name, 'sender_phone': sender_phone, 'email_body': email_body})
+    text_content = strip_tags(html_content)
+    email = EmailMultiAlternatives(
+        'Contact Email to Clinic',# subject
+        text_content,   # body
+        email_sender, # from email
+        [settings.EMAIL_HOST_USER] # to email
+    )
+    email.attach_alternative(html_content, 'text/html')
+    email.send()
+
+def reply_contact(request, contact_id):
+    if request.method == 'POST':
+        contact = Contact.objects.get(id=contact_id)
+        reply_message = request.POST.get('reply_message')
         
+        contact_email_toclinic(
+            settings.EMAIL_HOST_USER, 
+            'MS-Clinic', 
+            'MS-clinic(phone number)',
+            f'تم ارد على رسالتك "{contact.message}" \n الرد : {reply_message}'
+            )
+        
+        messages.success(request, 'تم إرسال الرد بنجاح')
+        return redirect('dashboard')

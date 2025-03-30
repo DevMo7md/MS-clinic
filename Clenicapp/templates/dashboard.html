@@ -9,61 +9,236 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="content-section">
-        <h2 class="section-title mb-4">إضافة بطاقة تعريف إصابة</h2>
+        <button
+          class="btn btn-primary btn-lg w-100 mb-4"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#addCardForm"
+          aria-expanded="false"
+          aria-controls="addCardForm"
+        >
+          <i class="fas fa-plus-circle me-2"></i>إضافة بطاقة تعريف إصابة جديدة
+        </button>
 
-        <form method="POST" enctype="multipart/form-data">
+        <div class="collapse" id="addCardForm">
+          <div class="card card-body">
+            <h2 class="section-title mb-4">إضافة بطاقة تعريف إصابة</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="mb-4">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    class="form-control"
+                    required
+                  />
+                  <label for="name">اسم الإصابة</label>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="form-floating">
+                  <textarea
+                    name="details"
+                    id="details"
+                    class="form-control"
+                    style="height: 150px"
+                    required
+                  ></textarea>
+                  <label for="details">تفاصيل الإصابة</label>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="form-floating">
+                  <input
+                    type="file"
+                    name="images"
+                    id="images"
+                    class="form-control"
+                    multiple
+                    required
+                  />
+                  <label for="images">صور الإصابة</label>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">إضافة</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="content-section">
+        <h2 class="section-title mb-4">الرسائل الواردة</h2>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>الاسم</th>
+                <th>البريد الإلكتروني</th>
+                <th>رقم الهاتف</th>
+                <th>الرسالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for contact in contacts %}
+              <tr>
+                <td>{{ contact.name }}</td>
+                <td>{{ contact.email }}</td>
+                <td>{{ contact.phone }}</td>
+                <td>
+                  <div class="message-cell">
+                    <span class="message-preview"
+                      >{{ contact.message|truncatechars:50 }}</span
+                    >
+                    <button
+                      class="btn btn-sm btn-link view-message"
+                      data-bs-toggle="modal"
+                      data-bs-target="#messageModal{{ contact.id }}"
+                    >
+                      عرض المزيد
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <button
+                    class="btn btn-sm btn-success reply-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#replyModal{{ contact.id }}"
+                  >
+                    <i class="fas fa-reply"></i> رد
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message Modals -->
+{% for contact in contacts %}
+<div
+  class="modal fade"
+  id="messageModal{{ contact.id }}"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">رسالة من {{ contact.name }}</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ contact.message }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- Reply Modals -->
+{% for contact in contacts %}
+<div
+  class="modal fade"
+  id="replyModal{{ contact.id }}"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">الرد على {{ contact.name }}</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'reply_contact' contact.id %}">
           {% csrf_token %}
-
-          <div class="mb-4">
-            <div class="form-floating">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                class="form-control"
-                required
-              />
-              <label for="name">اسم الإصابة</label>
+          <div class="mb-3">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input
+              type="email"
+              class="form-control"
+              value="{{ contact.email }}"
+              readonly
+            />
+          </div>
+          <div class="mb-3">
+            <label for="replyMessage{{ contact.id }}" class="form-label"
+              >الرد</label
+            >
+            <textarea
+              class="form-control"
+              id="replyMessage{{ contact.id }}"
+              name="reply_message"
+              rows="5"
+              required
+            ></textarea>
+            <div class="form-text">
+              <span id="charCount{{ contact.id }}">0</span>/500 حرف
             </div>
           </div>
-
-          <div class="mb-4">
-            <div class="form-floating">
-              <textarea
-                name="details"
-                id="details"
-                class="form-control"
-                style="height: 150px"
-                required
-              ></textarea>
-              <label for="details">تفاصيل الإصابة</label>
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <div class="form-floating">
-              <input
-                type="file"
-                name="images"
-                id="images"
-                class="form-control"
-                multiple
-                required
-              />
-              <label for="images">صور الإصابة</label>
-            </div>
-          </div>
-
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary">إضافة</button>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">إرسال الرد</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+{% endfor %}
 
 <style>
+  .btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+
   .form-floating {
     margin-bottom: 1rem;
   }
@@ -97,5 +272,105 @@
   .form-floating > textarea.form-control ~ label {
     transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
   }
+
+  /* Table Styles */
+  .table {
+    background-color: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    padding: 1rem;
+    text-align: right;
+  }
+
+  .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+  }
+
+  .message-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .message-preview {
+    flex: 1;
+    color: #6c757d;
+  }
+
+  .btn-link {
+    padding: 0;
+    color: #0d6efd;
+    text-decoration: none;
+  }
+
+  .btn-link:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+  }
+
+  /* Modal Styles */
+  .modal-content {
+    border-radius: 0.5rem;
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    white-space: pre-wrap;
+  }
+
+  /* Reply Button Styles */
+  .reply-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+  }
+
+  .reply-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .reply-btn i {
+    margin-left: 0.5rem;
+  }
+
+  /* Form Text Styles */
+  .form-text {
+    text-align: left;
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% for contact in contacts %}
+    const textarea{{ contact.id }} = document.getElementById('replyMessage{{ contact.id }}');
+    const charCount{{ contact.id }} = document.getElementById('charCount{{ contact.id }}');
+
+    textarea{{ contact.id }}.addEventListener('input', function() {
+      const length = this.value.length;
+      charCount{{ contact.id }}.textContent = length;
+
+      if (length > 500) {
+        this.value = this.value.substring(0, 500);
+        charCount{{ contact.id }}.textContent = '500';
+      }
+    });
+    {% endfor %}
+  });
+</script>
 {% endblock %}

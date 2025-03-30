@@ -16,6 +16,7 @@ urlpatterns = [
     path('logout', views.logout, name='logout'),
     # dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('reply-contact/<int:contact_id>/', views.reply_contact, name='reply_contact'),
 
 ]
 
