@@ -108,6 +108,22 @@
         color: var(--primary-color);
       }
 
+      /* Reservation Link Style */
+      .nav-link.reservation-link {
+        background-color: var(--primary-color);
+        color: white !important;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link.reservation-link:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+      }
+
       /* Footer Styles */
       .footer {
         background: white;
@@ -258,6 +274,11 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'connect' %}">اتصل بنا</a>
             </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'user_reservations' %}">حجوزاتك</a>
+            </li>  
+            {% endif %}
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 تخصصاتنا
@@ -268,13 +289,17 @@
                 <li><a class="dropdown-item" href="{% url 'PG_injuries' %}">إصابات الملاعب</a> </li>
             </ul>
             </li>
+            <li class="nav-item">
+              <a class="nav-link reservation-link" href="{% url 'reservation' %}">احجز موعدك</a>
             </li>
           </ul>
           {% if user.is_authenticated %}
           <ul class="navbar-nav">
+            {% if user.is_staff %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'dashboard' %}">لوحة التحكم</a>
             </li>
+            {% endif %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">تسجيل خروج</a>
             </li>
@@ -296,6 +321,15 @@
     <!-- Main Content -->
     <div id="loading">
     </div>
+      {% if messages %}
+      <div class="alert alert-warning mt-4">
+        <ul class="mb-0">
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
     {% block content %} {% endblock %}
 
     <!-- Footer -->

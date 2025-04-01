@@ -17,6 +17,14 @@ urlpatterns = [
     # dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
     path('reply-contact/<int:contact_id>/', views.reply_contact, name='reply_contact'),
+    # reservation
+    path('reservation/', views.reservation, name='reservation'),
+    path('user_reservations/', views.user_reservations, name='user_reservations'),
+    path('reservation_details/<str:reservation_id>/', views.reservation_details, name='reservation_details'),
+    path('cancel_reservation/<str:reservation_id>/', views.cancel_reservation, name='cancel_reservation'),
+    path('edit_reservation/<str:reservation_id>/', views.edit_reservation, name='edit_reservation'),
+    path('accept_reservation/<str:reservation_id>/', views.accept_reservation, name='accept_reservation'),
+    path('reject_reservation/<str:reservation_id>/', views.reject_reservation, name='reject_reservation'),
 
 ]
 

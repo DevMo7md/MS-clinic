@@ -1,0 +1,99 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4" dir="rtl">
+<h2 class="mb-4">حجوزاتي</h2>
+
+{% if reservations %}
+<div class="table-responsive">
+    <table class="table table-hover">
+    <thead class="table-light">
+        <tr>
+        <th>التاريخ</th>
+        <th>الخدمة</th>
+        <th>الحالة</th>
+        <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+        <tr>
+        <td>{{ reservation.date|date:"F d, Y" }}</td>
+        <td>{{ reservation.service }}</td>
+        <td>
+            <span
+            class="badge {% if reservation.status == 'confirmed' %}bg-success {% elif reservation.status == 'pending' %}bg-warning {% elif reservation.status == 'cancelled' %}bg-danger {% else %}bg-secondary{% endif %}"
+            >
+            {% if reservation.status == 'confirmed' %} مؤكد {% elif reservation.status == 'pending' %} قيد الانتظار 
+            {% elif reservation.status == 'cancelled' %} ملغي 
+            {% else %} 
+            {{ reservation.status|title }} 
+            {% endif %}
+            </span>
+        </td>
+        <td>
+            <a
+            href="{% url 'reservation_details' reservation.id %}"
+            class="btn btn-primary btn-sm"
+            >
+            عرض التفاصيل
+            </a>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <p class="mb-0">ليس لديك أي حجوزات حالياً.</p>
+</div>
+{% endif %}
+
+<div class="mt-4">
+    <a href="{% url 'reservation' %}" class="btn btn-success">
+    حجز موعد جديد
+    </a>
+</div>
+</div>
+
+<style>
+.table {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    text-align: right;
+}
+
+.table tbody td {
+    text-align: right;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* RTL specific styles */
+.btn {
+    direction: rtl;
+}
+
+.alert {
+    text-align: right;
+}
+</style>
+{% endblock %}

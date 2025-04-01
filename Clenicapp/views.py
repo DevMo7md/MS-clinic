@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_list_or_404, redirect
 from .models import *
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from . forms import CreateUserForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import auth
@@ -121,32 +123,46 @@ def PG_injuries(request):
 
 # dashboard
 def dashboard(request):
-    if not (request.user.is_authenticated and request.user.is_staff):
-        messages.error(request, "This page not allowed for you please login with your admin account")
-        return redirect('login')
-    contacts = Contact.objects.all()
+    if request.user.is_staff and request.user.is_authenticated :
+        # contacts
+        contact_list = Contact.objects.all().order_by('-created_at')
+        contact_paginator = Paginator(contact_list, 5)  # Show 5 contacts per page
+        contact_page = request.GET.get('contact_page')
+        contacts = contact_paginator.get_page(contact_page)
+        # reservations
+        reservation_list = Reservation.objects.all().order_by('-created_at')
+        reservation_paginator = Paginator(reservation_list, 5)  # Show 5 reservations per page
+        reservation_page = request.GET.get('reservation_page')
+        reservations = reservation_paginator.get_page(reservation_page)
 
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        details = request.POST.get('details')
-        photos = request.FILES.getlist('images')
-        # التحقق من صحة البيانات المدخلة
-        if not name:
-            messages.error(request, "حقل الاسم مطلوب.")
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            details = request.POST.get('details')
+            photos = request.FILES.getlist('images')
+            # التحقق من صحة البيانات المدخلة
+            if not name:
+                messages.error(request, "حقل الاسم مطلوب.")
+                return redirect('dashboard')
+            if not details:
+                messages.error(request, "حقل التفاصيل مطلوب.")
+                return redirect('dashboard')
+            if not photos:
+                messages.error(request, "يجب رفع صورة واحدة على الأقل.")
+                return redirect('dashboard')
+            
+            injury = Clinec_site.objects.create(healName=name, details=details, injuryImg=photos[0])
+            for photo in photos[1:]:
+                Injury_Photos.objects.create(injury=injury, photo=photo)
+            messages.success(request, "Injury added successfully")
             return redirect('dashboard')
-        if not details:
-            messages.error(request, "حقل التفاصيل مطلوب.")
-            return redirect('dashboard')
-        if not photos:
-            messages.error(request, "يجب رفع صورة واحدة على الأقل.")
-            return redirect('dashboard')
-        
-        injury = Clinec_site.objects.create(healName=name, details=details, injuryImg=photos[0])
-        for photo in photos[1:]:
-            Injury_Photos.objects.create(injury=injury, photo=photo)
-        messages.success(request, "Injury added successfully")
-        return redirect('dashboard')
-    return render(request, 'dashboard.html', {'contacts':contacts})
+        context = {
+            'contacts': contacts,
+            'reservations': reservations
+        }
+        return render(request, 'dashboard.html', context)
+    else:
+        messages.error(request, "This page not allowed for you please login with your admin account")
+        return redirect('main_page')
 
 # contact email to clinic
 def contact_email_toclinic(email_sender, sender_name, sender_phone, email_body):
@@ -174,4 +190,78 @@ def reply_contact(request, contact_id):
             )
         
         messages.success(request, 'تم إرسال الرد بنجاح')
+        contact.delete()
         return redirect('dashboard')
+    
+
+def reservation(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "الرجاء تسجيل الدخول لإجراء الحجز")
+        return redirect('login')
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(username=request.user.username)
+        except User.DoesNotExist:
+            messages.error(request, "الرجاء تسجيل الدخول لإجراء الحجز")
+            return redirect('login')
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        age = request.POST.get('age')
+        date = request.POST.get('date')
+        service = request.POST.get('service')
+        message = request.POST.get('message')
+        reservation = Reservation(patient=user, name=name, phoneNum=phone, age=age, date=date, service=service, message=message)
+        reservation.save()
+        messages.success(request, "تم إرسال الحجز بنجاح")
+        return redirect('reservation')
+    return render(request, 'reservation.html', {'service_choices': Reservation.SERVICE_CHOICES})
+
+def user_reservations(request):
+    reservations = Reservation.objects.filter(patient=request.user)
+    return render(request, 'user_reservations.html', {'reservations': reservations})
+
+def reservation_details(request, reservation_id):
+    reservation = Reservation.objects.get(id=reservation_id)
+    return render(request, 'reservation_details.html', {'reservation': reservation})
+
+def cancel_reservation(request, reservation_id):
+    reservation = Reservation.objects.get(id=reservation_id)
+    reservation.status = 'cancelled'
+    reservation.save()
+    return redirect('reservation')
+
+def edit_reservation(request, reservation_id):
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('reservation')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        phone = request.POST.get('phoneNum')
+        age = request.POST.get('age')
+        date = request.POST.get('date')
+        service = request.POST.get('service')
+        message = request.POST.get('message')
+        reservation.name = name
+        reservation.phoneNum = phone
+        reservation.age = age
+        reservation.date = date
+        reservation.service = service
+        reservation.message = message
+        reservation.save()
+        messages.success(request, "تم تعديل الحجز بنجاح")
+        return redirect('reservation_details', reservation_id)
+    return render(request, 'edit_reservation.html', {'reservation': reservation})
+
+def accept_reservation(request, reservation_id):
+    reservation = Reservation.objects.get(id=reservation_id)
+    reservation.status = 'confirmed'
+    reservation.save()
+    return redirect('dashboard')
+
+def reject_reservation(request, reservation_id):
+    reservation = Reservation.objects.get(id=reservation_id)
+    reservation.status = 'rejected'
+    reservation.save()
+    return redirect('dashboard')

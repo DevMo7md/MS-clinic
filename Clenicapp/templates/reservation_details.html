@@ -1,0 +1,239 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container py-5" dir="rtl">
+  <h2 class="mb-4">تفاصيل الحجز</h2>
+
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="card-title mb-0">الحالة</h4>
+            <span
+              class="badge {% if reservation.status == 'confirmed' %}bg-success{% elif reservation.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}"
+            >
+                {% if reservation.status == 'pending' %}قيد الانتظار {% elif reservation.status == 'confirmed' %}مقبول 
+                {% elif reservation.status == 'rejected' %}مرفوض 
+                {% elif reservation.status == 'cancelled' %}ملغي 
+                {% elif reservation.status == 'completed' %}مكتمل 
+                {% else %}
+                لم يحضر
+                {% endif %}            
+            </span>
+          </div>
+
+          <div class="row g-4">
+            <!-- Service Details -->
+            <div class="col-md-6">
+              <div class="card h-100 border-0 bg-light">
+                <div class="card-body">
+                  <h5 class="card-subtitle mb-3">تفاصيل الخدمة</h5>
+                  <p class="mb-2">
+                    <strong>الخدمة:</strong> {{ reservation.service }}
+                  </p>
+                  <p class="mb-2">
+                    <strong>التاريخ:</strong> {{ reservation.date|date:"Y/m/d"}}
+                  </p>
+                  <p class="mb-2">
+                    <strong>الوقت:</strong> {{ reservation.time|time:"H:i" }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Patient Details -->
+            <div class="col-md-6">
+              <div class="card h-100 border-0 bg-light">
+                <div class="card-body">
+                  <h5 class="card-subtitle mb-3">معلومات المريض</h5>
+                  <p class="mb-2">
+                    <strong>الاسم:</strong> {{ reservation.name }}
+                  </p>
+                  <p class="mb-2">
+                    <strong>رقم الهاتف:</strong> {{ reservation.phoneNum }}
+                  </p>
+                  <p class="mb-2">
+                    <strong>العمر:</strong> {{ reservation.age }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="col-12">
+              <div class="card border-0 bg-light">
+                <div class="card-body">
+                  <h5 class="card-subtitle mb-3">معلومات إضافية</h5>
+                  <p class="mb-2">
+                    <strong>الرسالة:</strong> {{reservation.message|default:"لاتوجد رسائل إضافية" }}
+                  </p>
+                  <p class="mb-2">
+                    <strong>تاريخ الحجز:</strong>
+                    {{reservation.created_at|date:"Y/m/d H:i" }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-4 d-flex justify-content-start gap-2">
+            {% if reservation.status == 'pending' %}
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#editReservationModal"
+            >
+              تعديل الحجز
+            </button>
+            <a
+              href="{% url 'cancel_reservation' reservation.id %}"
+              class="btn btn-danger"
+              >إلغاء الحجز</a
+            >
+            {% endif %}
+            {% if reservation.status == 'confirmed' %}
+            <div class="alert alert-success mt-4">
+            <ul class="mb-0">
+                <li>تم الموافقة على الحجز الرجاء زيارة العيادة في مواعيد العمل</li>
+                <li>مواعيد العمل من 9 صباحا الى 5 مساء</li>
+            </ul>
+            </div>
+            {% elif reservation.status == 'rejected' %}
+            <div class="alert alert-danger mt-4">
+            <ul class="mb-0">
+                <li>تم رفض الحجز المحاولة مره اخرى في وقت آخر</li>
+            </ul>
+            </div>
+            {% elif reservation.status == 'cancelled' %}
+            <div class="alert alert-danger mt-4">
+            <ul class="mb-0">
+                <li>لقد قمت بالغاء الحجز</li>
+            </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Reservation Modal -->
+<div
+  class="modal fade"
+  id="editReservationModal"
+  tabindex="-1"
+  aria-labelledby="editReservationModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editReservationModalLabel">تعديل الحجز</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form method="POST" action="{% url 'edit_reservation' reservation.id %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row g-3">
+            <!-- Service Selection -->
+            <div class="col-md-6">
+                <label for="service" class="form-label">نوع الخدمة</label>
+                <select class="form-select" id="service" name="service" required>
+                    {% for value, label in reservation.SERVICE_CHOICES %}
+                        <option value="{{ value }}" {% if reservation.service == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>            
+            </div>
+
+            <!-- Date Selection -->
+            <div class="col-md-6">
+              <label for="date" class="form-label">التاريخ</label>
+              <input
+                type="date"
+                class="form-control"
+                id="date"
+                name="date"
+                value="{{ reservation.date|date:'Y-m-d' }}"
+                required
+              />
+            </div>
+
+            <!-- Time Selection -->
+            
+            <!-- Patient Name -->
+            <div class="col-md-6">
+              <label for="name" class="form-label">اسم المريض</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                value="{{ reservation.name }}"
+                required
+              />
+            </div>
+
+            <!-- Phone Number -->
+            <div class="col-md-6">
+              <label for="phoneNum" class="form-label">رقم الهاتف</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phoneNum"
+                name="phoneNum"
+                value="{{ reservation.phoneNum }}"
+                required
+              />
+            </div>
+
+            <!-- Age -->
+            <div class="col-md-6">
+              <label for="age" class="form-label">العمر</label>
+              <input
+                type="number"
+                class="form-control"
+                id="age"
+                name="age"
+                value="{{ reservation.age }}"
+                required
+              />
+            </div>
+
+            <!-- Message -->
+            <div class="col-12">
+              <label for="message" class="form-label">رسالة إضافية</label>
+              <textarea
+                class="form-control"
+                id="message"
+                name="message"
+                rows="3"
+              >
+{{ reservation.message }}</textarea
+              >
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            إلغاء
+          </button>
+          <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

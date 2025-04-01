@@ -1,0 +1,124 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">حجز موعد</h1>
+    <p class="lead text-muted">احجز موعدك بسهولة وسرعة مع أفضل المتخصصين</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="content-section">
+        <form method="POST" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <!-- Personal Information -->
+            <div class="col-md-6">
+              <label for="name" class="form-label">الاسم الكامل</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                required
+              />
+              <div class="invalid-feedback">الرجاء إدخال اسمك</div>
+            </div>
+            <div class="col-md-6">
+              <label for="phone" class="form-label">رقم الهاتف</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phone"
+                name="phone"
+                required
+              />
+              <div class="invalid-feedback">الرجاء إدخال رقم هاتفك</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="age" class="form-label">العمر</label>
+              <input
+                type="number"
+                class="form-control"
+                id="age"
+                name="age"
+                min="1"
+                max="120"
+                required
+              />
+              <div class="invalid-feedback">الرجاء إدخال عمر صحيح</div>
+            </div>
+
+            <!-- Appointment Details -->
+            <div class="col-md-6">
+              <label for="date" class="form-label">تاريخ الموعد</label>
+              <input
+                type="date"
+                class="form-control"
+                id="date"
+                name="date"
+                required
+              />
+              <div class="invalid-feedback">الرجاء اختيار تاريخ الموعد</div>
+            </div>
+
+            <!-- Service Selection -->
+            <div class="col-12">
+              <label for="service" class="form-label">نوع الخدمة</label>
+              <select class="form-select" id="service" name="service" required>
+                <option value="">اختر نوع الخدمة</option>
+                {% for value, label in service_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+              <div class="invalid-feedback">الرجاء اختيار نوع الخدمة</div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="col-12">
+              <label for="notes" class="form-label">ملاحظات إضافية</label>
+              <textarea
+                class="form-control"
+                id="notes"
+                name="notes"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-calendar-check me-2"></i>
+                تأكيد الحجز
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Validation Script -->
+<script>
+  (function () {
+    "use strict";
+    var forms = document.querySelectorAll(".needs-validation");
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener(
+        "submit",
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
+{% endblock %}
