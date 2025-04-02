@@ -148,7 +148,9 @@
             <li class="page-item disabled">
               <span class="page-link" aria-hidden="true">&laquo;</span>
             </li>
-            {% endif %} {% for num in contacts.paginator.page_range %} {% if contacts.number == num %}
+            {% endif %} 
+            {% for num in contacts.paginator.page_range %} 
+            {% if contacts.number == num %}
             <li class="page-item active">
               <span class="page-link">{{ num }}</span>
             </li>
@@ -156,7 +158,9 @@
             <li class="page-item">
               <a class="page-link" href="?contact_page={{ num }}">{{ num }}</a>
             </li>
-            {% endif %} {% endfor %} {% if contacts.has_next %}
+            {% endif %} 
+            {% endfor %} 
+            {% if contacts.has_next %}
             <li class="page-item">
               <a
                 class="page-link"
@@ -185,6 +189,48 @@
     <div class="col-md-10">
       <div class="content-section">
         <h2 class="section-title mb-4">المواعيد المحجوزة</h2>
+
+        <!-- Status Filter Buttons -->
+        <div class="mb-4">
+          <div class="btn-group" role="group">
+            <a
+              href="?reservation_page=1"
+              class="btn btn-outline-primary {% if not request.GET.status %}active{% endif %}"
+              >الكل</a
+            >
+            <a
+              href="?reservation_page=1&status=pending"
+              class="btn btn-outline-warning {% if request.GET.status == 'pending' %}active{% endif %}"
+              >قيد الانتظار</a
+            >
+            <a
+              href="?reservation_page=1&status=confirmed"
+              class="btn btn-outline-success {% if request.GET.status == 'confirmed' %}active{% endif %}"
+              >مقبول</a
+            >
+            <a
+              href="?reservation_page=1&status=rejected"
+              class="btn btn-outline-danger {% if request.GET.status == 'rejected' %}active{% endif %}"
+              >مرفوض</a
+            >
+            <a
+              href="?reservation_page=1&status=cancelled"
+              class="btn btn-outline-secondary {% if request.GET.status == 'cancelled' %}active{% endif %}"
+              >ملغي</a
+            >
+            <a
+              href="?reservation_page=1&status=completed"
+              class="btn btn-outline-info {% if request.GET.status == 'completed' %}active{% endif %}"
+              >مكتمل</a
+            >
+            <a
+              href="?reservation_page=1&status=no_show"
+              class="btn btn-outline-dark {% if request.GET.status == 'no_show' %}active{% endif %}"
+              >لم يأتي</a
+            >
+          </div>
+        </div>
+
         <div class="table-responsive">
           <table class="table table-hover">
             <thead class="table-light">
@@ -208,15 +254,14 @@
                 <td>{{ reservation.time }}</td>
                 <td>
                   <span
-                    class="badge {% if reservation.status == 'pending' %}bg-warning{% elif reservation.status == 'confirmed' %}bg-success{% elif reservation.status == 'rejected' %}bg-danger{% elif reservation.status == 'cancelled' %}bg-secondary{% elif reservation.status == 'completed' %}bg-info{% else %}bg-secondary{% endif %}"
+                    class="badge {% if reservation.status == 'pending' %}bg-warning{% elif reservation.status == 'confirmed' %}bg-success{% elif reservation.status == 'rejected' %}bg-danger{% elif reservation.status == 'cancelled' %}bg-secondary{% elif reservation.status == 'completed' %}bg-info{% else %}bg-dark{% endif %}"
                   >
-                    {% if reservation.status == 'pending' %}قيد الانتظار {% elif reservation.status == 'confirmed' %}مقبول 
+                    {% if reservation.status == 'pending' %}قيد الانتظار 
+                    {% elif reservation.status == 'confirmed' %}مقبول 
                     {% elif reservation.status == 'rejected' %}مرفوض 
                     {% elif reservation.status == 'cancelled' %}ملغي 
                     {% elif reservation.status == 'completed' %}مكتمل 
-                    {% else %}
-                    لم يحضر
-                    {% endif %}
+                    {% else %} لم يحضر {% endif %}
                   </span>
                 </td>
                 <td>
@@ -232,10 +277,37 @@
                         <i class="fas fa-check"></i> قبول
                       </button>
                     </form>
-                    <form method="POST" action="{% url 'reject_reservation' reservation.id %}" class="d-inline">
+                    <form
+                      method="POST"
+                      action="{% url 'reject_reservation' reservation.id %}"
+                      class="d-inline"
+                    >
                       {% csrf_token %}
                       <button type="submit" class="btn btn-sm btn-danger">
                         <i class="fas fa-times"></i> رفض
+                      </button>
+                    </form>
+                  </div>
+                  {% elif reservation.status == 'confirmed' %}
+                  <div class="btn-group">
+                    <form
+                      method="POST"
+                      action="{% url 'confirm_reservation' reservation.id %}"
+                      class="d-inline"
+                    >
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-info me-2">
+                        <i class="fas fa-check"></i> اكتمل
+                      </button>
+                    </form>
+                    <form
+                      method="POST"
+                      action="{% url 'no_show_reservation' reservation.id %}"
+                      class="d-inline"
+                    >
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-dark">
+                        <i class="fas fa-times"></i> لم يأتي
                       </button>
                     </form>
                   </div>
@@ -261,7 +333,7 @@
             <li class="page-item">
               <a
                 class="page-link"
-                href="?reservation_page={{ reservations.previous_page_number }}"
+                href="?reservation_page={{ reservations.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}"
                 aria-label="Previous"
               >
                 <span aria-hidden="true">&laquo;</span>
@@ -278,7 +350,9 @@
             </li>
             {% elif num > reservations.number|add:'-3' and num < reservations.number|add:'3' %}
             <li class="page-item">
-              <a class="page-link" href="?reservation_page={{ num }}"
+              <a
+                class="page-link"
+                href="?reservation_page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}"
                 >{{ num }}</a
               >
             </li>
@@ -286,7 +360,7 @@
             <li class="page-item">
               <a
                 class="page-link"
-                href="?reservation_page={{ reservations.next_page_number }}"
+                href="?reservation_page={{ reservations.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}"
                 aria-label="Next"
               >
                 <span aria-hidden="true">&raquo;</span>
@@ -359,6 +433,7 @@
             <label class="form-label">البريد الإلكتروني</label>
             <input
               type="email"
+              name="email"
               class="form-control"
               value="{{ contact.email }}"
               readonly

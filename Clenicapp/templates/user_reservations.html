@@ -20,10 +20,14 @@
         <td>{{ reservation.service }}</td>
         <td>
             <span
-            class="badge {% if reservation.status == 'confirmed' %}bg-success {% elif reservation.status == 'pending' %}bg-warning {% elif reservation.status == 'cancelled' %}bg-danger {% else %}bg-secondary{% endif %}"
+            class="badge {% if reservation.status == 'confirmed' %}bg-success {% elif reservation.status == 'pending' %}bg-warning {% elif reservation.status == 'rejected' %}bg-danger {% elif reservation.status == 'cancelled' %}bg-secondary {% elif reservation.status == 'no_show' %}bg-dark {% elif reservation.status == 'completed' %}bg-info {% else %}bg-secondary{% endif %}"
             >
-            {% if reservation.status == 'confirmed' %} مؤكد {% elif reservation.status == 'pending' %} قيد الانتظار 
+            {% if reservation.status == 'confirmed' %} مؤكد 
+            {% elif reservation.status == 'pending' %} قيد الانتظار 
             {% elif reservation.status == 'cancelled' %} ملغي 
+            {% elif reservation.status == 'rejected' %} مرفوض 
+            {% elif reservation.status == 'no_show' %} لم تأتي 
+            {% elif reservation.status == 'completed' %} مكتمل 
             {% else %} 
             {{ reservation.status|title }} 
             {% endif %}

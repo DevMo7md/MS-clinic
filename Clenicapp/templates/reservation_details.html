@@ -9,11 +9,13 @@
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="card-title mb-0">الحالة</h4>
             <span
-              class="badge {% if reservation.status == 'confirmed' %}bg-success{% elif reservation.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}"
+              class="badge {% if reservation.status == 'confirmed' %}bg-success {% elif reservation.status == 'pending' %}bg-warning {% elif reservation.status == 'cancelled' %}bg-secondary {% elif reservation.status == 'rejected' %}bg-danger {% elif reservation.status == 'no_show' %}bg-dark {% elif reservation.status == 'completed' %}bg-info {% else %}bg-secondary{% endif %}"
             >
-                {% if reservation.status == 'pending' %}قيد الانتظار {% elif reservation.status == 'confirmed' %}مقبول 
+                {% if reservation.status == 'pending' %}قيد الانتظار 
+                {% elif reservation.status == 'confirmed' %}مقبول 
                 {% elif reservation.status == 'rejected' %}مرفوض 
                 {% elif reservation.status == 'cancelled' %}ملغي 
+                {% elif reservation.status == 'no_show' %}لم يأتي 
                 {% elif reservation.status == 'completed' %}مكتمل 
                 {% else %}
                 لم يحضر
@@ -96,7 +98,7 @@
             <div class="alert alert-success mt-4">
             <ul class="mb-0">
                 <li>تم الموافقة على الحجز الرجاء زيارة العيادة في مواعيد العمل</li>
-                <li>مواعيد العمل من 9 صباحا الى 5 مساء</li>
+                <li>مواعيد العمل من 9 صباحا الى 5 مساء يوميا ماعدا يوم الجمعة</li>
             </ul>
             </div>
             {% elif reservation.status == 'rejected' %}
@@ -106,7 +108,7 @@
             </ul>
             </div>
             {% elif reservation.status == 'cancelled' %}
-            <div class="alert alert-danger mt-4">
+            <div class="alert alert-secondary mt-4">
             <ul class="mb-0">
                 <li>لقد قمت بالغاء الحجز</li>
             </ul>

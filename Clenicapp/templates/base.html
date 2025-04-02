@@ -274,7 +274,7 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'connect' %}">اتصل بنا</a>
             </li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and not user.is_staff %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'user_reservations' %}">حجوزاتك</a>
             </li>  
@@ -289,9 +289,11 @@
                 <li><a class="dropdown-item" href="{% url 'PG_injuries' %}">إصابات الملاعب</a> </li>
             </ul>
             </li>
+            {% if user.is_authenticated and not user.is_staff %}
             <li class="nav-item">
               <a class="nav-link reservation-link" href="{% url 'reservation' %}">احجز موعدك</a>
             </li>
+            {% endif %}
           </ul>
           {% if user.is_authenticated %}
           <ul class="navbar-nav">

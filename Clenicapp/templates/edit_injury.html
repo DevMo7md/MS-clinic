@@ -1,0 +1,73 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="text-center">تعديل الإصابة</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="healName" class="form-label">اسم الإصابة</label>
+              <input
+                type="text"
+                class="form-control"
+                id="healName"
+                name="name"
+                value="{{ injury.healName }}"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="injuryImg" class="form-label">صورة الإصابة</label>
+              <input
+                type="file"
+                class="form-control"
+                id="injuryImg"
+                name="images"
+                multiple
+              />
+              {% if injury.injuryImg %}
+              <div class="mt-2">
+                <img
+                  src="{{ injury.injuryImg.url }}"
+                  alt="Current injury image"
+                  style="max-width: 200px"
+                />
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="details" class="form-label"
+                >تفاصيل عن طرق علاجها بالمركز</label
+              >
+              <textarea
+                class="form-control"
+                id="details"
+                name="details"
+                rows="5"
+              >
+{{ injury.details }}</textarea
+              >
+            </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">
+                حفظ التغييرات
+              </button>
+              <a href="{% url 'dashboard' %}" class="btn btn-secondary"
+                >إلغاء</a
+              >
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

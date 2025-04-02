@@ -11,6 +11,9 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.db.models import Case, When, Value, IntegerField
+from django.utils import timezone
+from datetime import timedelta, datetime
 
 # Create your views here.
 def register(request):
@@ -94,7 +97,7 @@ def connect(request):
         fcomment = request.POST.get('comment')
         query = Contact(name=fnamee, email=femail, phoneNum=fphone, message=fcomment)
         query.save()
-        contact_email_toclinic(femail, fnamee, fphone, fcomment)
+        contact_email(femail, settings.EMAIL_HOST_USER, fnamee, fphone, fcomment)
         messages.success(request, "Email sent successfully")
         return redirect("connect")
     
@@ -130,7 +133,11 @@ def dashboard(request):
         contact_page = request.GET.get('contact_page')
         contacts = contact_paginator.get_page(contact_page)
         # reservations
-        reservation_list = Reservation.objects.all().order_by('-created_at')
+        status_filter = request.GET.get('status')
+        if status_filter:
+            reservation_list = Reservation.objects.filter(status=status_filter).order_by('-created_at')
+        else:
+            reservation_list = Reservation.objects.all().order_by('date')
         reservation_paginator = Paginator(reservation_list, 5)  # Show 5 reservations per page
         reservation_page = request.GET.get('reservation_page')
         reservations = reservation_paginator.get_page(reservation_page)
@@ -150,7 +157,7 @@ def dashboard(request):
                 messages.error(request, "يجب رفع صورة واحدة على الأقل.")
                 return redirect('dashboard')
             
-            injury = Clinec_site.objects.create(healName=name, details=details, injuryImg=photos[0])
+            injury = Clinec_site.objects.create(healName=name, details=details, healinfo=details, injuryImg=photos[0])
             for photo in photos[1:]:
                 Injury_Photos.objects.create(injury=injury, photo=photo)
             messages.success(request, "Injury added successfully")
@@ -164,26 +171,77 @@ def dashboard(request):
         messages.error(request, "This page not allowed for you please login with your admin account")
         return redirect('main_page')
 
+
+def edit_injury(request, injury_id):
+    try:
+        injury = Clinec_site.objects.get(id=injury_id)
+    except Clinec_site.DoesNotExist:
+        messages.error(request, "الإصابة غير موجودة")
+        return redirect('dashboard')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        details = request.POST.get('details')
+        photos = request.FILES.getlist('images')
+        # التحقق من صحة البيانات المدخلة
+        if not name:
+            messages.error(request, "حقل الاسم مطلوب.")
+            return redirect('dashboard')
+        if not details:
+            messages.error(request, "حقل التفاصيل مطلوب.")
+            return redirect('dashboard')
+        injury.healName = name
+        injury.details = details
+        injury.healinfo = details
+        injury.save()
+        if photos:
+            injury.injuryImg = photos[0]
+            injury.save()
+            # delete old photos
+            injury_photos = Injury_Photos.objects.filter(injury=injury)
+            for injury_photo in injury_photos:
+                injury_photo.delete()
+            # create new photos
+            for photo in photos[1:]:
+                Injury_Photos.objects.create(injury=injury, photo=photo)
+            messages.success(request, "تم تعديل الإصابة بنجاح")
+        return redirect('main_page')
+    context = {'injury': injury}
+    return render(request, 'edit_injury.html', context) 
+
+def delete_injury(request, injury_id):
+    try:
+        injury = Clinec_site.objects.get(id=injury_id)
+        injury.delete()
+        messages.success(request, "تم حذف الإصابة بنجاح")
+    except Clinec_site.DoesNotExist:
+        messages.error(request, "الإصابة غير موجودة")
+    return redirect('main_page')
+
 # contact email to clinic
-def contact_email_toclinic(email_sender, sender_name, sender_phone, email_body):
-    html_content = render_to_string('contact_email_toclinic.html', {'email_sender': email_sender, 'sender_name': sender_name, 'sender_phone': sender_phone, 'email_body': email_body})
+def contact_email(email_sender, email_receiver, sender_name, sender_phone, email_body):
+    html_content = render_to_string('contact_email_toclinic.html', {'email_sender': email_sender, 'email_receiver': email_receiver, 'sender_name': sender_name, 'sender_phone': sender_phone, 'email_body': email_body})
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(
         'Contact Email to Clinic',# subject
         text_content,   # body
         email_sender, # from email
-        [settings.EMAIL_HOST_USER] # to email
+        [email_receiver] # to email
     )
     email.attach_alternative(html_content, 'text/html')
     email.send()
 
 def reply_contact(request, contact_id):
     if request.method == 'POST':
-        contact = Contact.objects.get(id=contact_id)
+        try:
+            contact = Contact.objects.get(id=contact_id)
+        except Contact.DoesNotExist:
+            messages.error(request, "الرسالة غير موجودة")
+            return redirect('dashboard')
         reply_message = request.POST.get('reply_message')
         
-        contact_email_toclinic(
+        contact_email(
             settings.EMAIL_HOST_USER, 
+            contact.email,
             'MS-Clinic', 
             'MS-clinic(phone number)',
             f'تم ارد على رسالتك "{contact.message}" \n الرد : {reply_message}'
@@ -207,28 +265,61 @@ def reservation(request):
         name = request.POST.get('name')
         phone = request.POST.get('phone')
         age = request.POST.get('age')
-        date = request.POST.get('date')
+        date_str = request.POST.get('date')
         service = request.POST.get('service')
         message = request.POST.get('message')
+        
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            messages.error(request, "صيغة التاريخ غير صحيحة")
+            return redirect('reservation')
+            
+        if date < timezone.now().date():
+            messages.error(request, "التاريخ المحدد سبق اليوم")
+            return redirect('reservation')
+        if date > timezone.now().date() + timedelta(days=10):
+            messages.error(request, "لا يمكن حجز تاريخ أبعد من 10 يوم")
+            return redirect('reservation')
+            
         reservation = Reservation(patient=user, name=name, phoneNum=phone, age=age, date=date, service=service, message=message)
         reservation.save()
-        messages.success(request, "تم إرسال الحجز بنجاح")
-        return redirect('reservation')
+        mail_message_to_clinic = f"تم إرسال حجز جديد من {name} برجاء التوجه للموقع لتاكيد الحجز"
+        contact_email(user.email, settings.EMAIL_HOST_USER, name, phone, mail_message_to_clinic)
+        mail_message_to_user = f"تم إرسال الحجز بنجاح سيصلك رسالة على بريدك الإلكتروني حين يتم تأكيد الحجز"
+        contact_email(settings.EMAIL_HOST_USER, user.email, 'MS-Clinic', 'MS-clinic(phone number)', mail_message_to_user)
+        messages.success(request, "تم إرسال الحجز بنجاح سيصلك رسالة على بريدك الإلكتروني حين يتم تأكيد الحجز")
+        return redirect('user_reservations')
     return render(request, 'reservation.html', {'service_choices': Reservation.SERVICE_CHOICES})
 
 def user_reservations(request):
-    reservations = Reservation.objects.filter(patient=request.user)
+    reservations = Reservation.objects.filter(patient=request.user).annotate(
+        date_order=Case(
+            When(date__gte=timezone.now().date(), then=Value(1)),
+            default=Value(2),
+            output_field=IntegerField(),
+        )
+    ).order_by('date_order', 'date')
     return render(request, 'user_reservations.html', {'reservations': reservations})
 
 def reservation_details(request, reservation_id):
-    reservation = Reservation.objects.get(id=reservation_id)
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('reservation')
     return render(request, 'reservation_details.html', {'reservation': reservation})
 
 def cancel_reservation(request, reservation_id):
-    reservation = Reservation.objects.get(id=reservation_id)
-    reservation.status = 'cancelled'
-    reservation.save()
-    return redirect('reservation')
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('reservation')
+    if request.method == 'POST':
+        reservation.status = 'cancelled'
+        reservation.save()
+        return redirect('reservation')
 
 def edit_reservation(request, reservation_id):
     try:
@@ -255,13 +346,49 @@ def edit_reservation(request, reservation_id):
     return render(request, 'edit_reservation.html', {'reservation': reservation})
 
 def accept_reservation(request, reservation_id):
-    reservation = Reservation.objects.get(id=reservation_id)
-    reservation.status = 'confirmed'
-    reservation.save()
-    return redirect('dashboard')
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('dashboard')
+    if request.method == 'POST':
+        reservation.status = 'confirmed'
+        reservation.save()
+        message = f"تم الموافقة على حجزك الرجاء التوجه الى العيادة في التاريخ التالي {reservation.date} في مواعيد العمل \n مواعيد العمل يوميا من الساعة 9 صباحا حتى 5 مساء ما عدا الجمعة"
+        contact_email(settings.EMAIL_HOST_USER, reservation.patient.email, 'MS-Clinic', 'MS-clinic(phone number)', message)
+        return redirect('dashboard')
 
 def reject_reservation(request, reservation_id):
-    reservation = Reservation.objects.get(id=reservation_id)
-    reservation.status = 'rejected'
-    reservation.save()
-    return redirect('dashboard')
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('dashboard')
+    if request.method == 'POST':
+        reservation.status = 'rejected'
+        reservation.save()
+        message = f"تم رفض حجزك الرجاء المحاولة في وقت آخر"
+        contact_email(settings.EMAIL_HOST_USER, reservation.patient.email, 'MS-Clinic', 'MS-clinic(phone number)', message)
+        return redirect('dashboard')
+
+def confirm_reservation(request, reservation_id):
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('dashboard')
+    if request.method == 'POST':
+        reservation.status = 'completed'
+        reservation.save()
+        return redirect('dashboard')
+    
+def no_show_reservation(request, reservation_id):
+    try:
+        reservation = Reservation.objects.get(id=reservation_id)
+    except Reservation.DoesNotExist:
+        messages.error(request, "الحجز غير موجود")
+        return redirect('dashboard')
+    if request.method == 'POST':
+        reservation.status = 'no_show'
+        reservation.save()
+        return redirect('dashboard')

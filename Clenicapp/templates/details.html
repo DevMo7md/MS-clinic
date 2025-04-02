@@ -153,6 +153,12 @@
       </div>
     </div>
   </div>
+  {% if user.is_staff %}
+  <div class="text-center">
+    <a href="{% url 'edit_injury' injury.id %}" class="btn btn-warning backbtn">تعديل</a>
+    <a href="{% url 'delete_injury' injury.id %}" class="btn btn-danger backbtn">حذف</a>
+  </div>
+  {% endif %}
   <div class="text-center">
     <a href="http://127.0.0.1:8000/" class="btn btn-primary backbtn">رجوع</a>
   </div>
