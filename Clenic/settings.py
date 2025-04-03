@@ -85,14 +85,32 @@ WSGI_APPLICATION = 'Clenic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME':'Clinic',
-        'USER': 'postgres',
-        'PASSWORD': '123456',
-        'HOST': 'localhost', # or your database host
-        'PORT': '5432', # or your database port
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST', default='localhost'),
+        'PORT': config('DATABASE_PORT', default='5432'),
     }
 }
 
+# MySQL Database
+'''
+download: mysqlclient==2.2.7 --> pip install mysqlclient
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DATABASE_NAME'),  # اسم قاعدة البيانات
+        'USER': config('DATABASE_USER'),  # اسم المستخدم
+        'PASSWORD': config('DATABASE_PASSWORD'),  # كلمة المرور
+        'HOST': config('DATABASE_HOST', default='MSClinic.mysql.pythonanywhere-services.com'),  # استبدل باسم المستخدم
+        'PORT': config('DATABASE_PORT', default='3306'),
+        'OPTIONS': {
+            'sql_mode': 'STRICT_TRANS_TABLES',
+        }
+    }
+}
+
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
