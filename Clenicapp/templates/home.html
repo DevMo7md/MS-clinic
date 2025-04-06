@@ -1,4 +1,21 @@
 {% extends 'base.html' %} {% block content %}
+<!-- Announcement Message -->
+<div id="announcement" class="announcement-banner">
+  <div class="announcement-content">
+    <div class="announcement-text">
+      <h2 class="announcement-title">تقدر تحجز معادك من بيتك 🌟</h2>
+      <p class="announcement-subtitle">سجل في الموقع واحجز معادك 👨🏼‍⚕️🦴</p>
+    </div>
+    <button
+      class="announcement-close"
+      onclick="closeAnnouncement()"
+      title="إغلاق الإعلان"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>
+
 <div class="page-header">
   <div class="container">
     <h1 class="page-title text-center">مرحباً في MS-Clinic</h1>
@@ -87,5 +104,70 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+
+  /* Announcement Banner Styles */
+  .announcement-banner {
+    background-color: #e6e9ed;
+    color: rgb(0, 0, 0);
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .announcement-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .announcement-text {
+    text-align: center;
+    width: 100%;
+  }
+
+  .announcement-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-decoration: underline;
+  }
+
+  .announcement-subtitle {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .announcement-close {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  .announcement-close:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
 </style>
-{% endblock %}
+
+{% block extra_js %}
+<script>
+  function closeAnnouncement() {
+    const announcement = document.getElementById("announcement");
+    announcement.style.display = "none";
+  }
+</script>
+{% endblock %} {% endblock %}
